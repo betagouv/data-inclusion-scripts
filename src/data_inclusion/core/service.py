@@ -14,7 +14,7 @@ class DataFormat(str, enum.Enum):
     JSON = "json"
 
 
-def process(format: DataFormat, url: str):
+def process(source_label: str, format: DataFormat, url: str):
     # extraction
     if format == DataFormat.JSON:
         df = pd.read_json(url)

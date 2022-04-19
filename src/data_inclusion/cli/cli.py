@@ -15,10 +15,12 @@ def cli(verbose: int):
 
 @cli.command(name="import")
 @click.argument("format", type=click.Choice(list(service.DataFormat)))
+@click.argument("source_label", type=click.STRING)
 @click.argument("url", type=click.STRING)
-def import_(format: str, url: str):
+def import_(source_label: str, format: str, url: str):
     "import data"
     service.process(
+        source_label=source_label,
         format=format,
         url=url,
     )

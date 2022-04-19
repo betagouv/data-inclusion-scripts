@@ -1,0 +1,8 @@
+{
+    "jobs": [
+        {
+            "command": "0 11 * * 1-5 data-inclusion -vv import csv dora https://www.data.gouv.fr/fr/datasets/r/fd4cb3ef-5c31-4c99-92fe-2cd8016c0ca5",
+            "size": "S"
+        }
+    ]
+}
