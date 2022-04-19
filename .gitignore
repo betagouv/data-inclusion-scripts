@@ -1,0 +1,17 @@
+# Python
+*.py[cod]
+__pycache__/
+*.egg-info
+
+# VSCode
+.vscode/
+!.vscode/settings.json
+
+# Virtualenv
+.venv/
+venv/
+
+# Misc
+.tmp/
+.tox/
+.pytest_cache

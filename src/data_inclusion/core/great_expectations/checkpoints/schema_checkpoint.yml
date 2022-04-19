@@ -1,0 +1,39 @@
+name: schema_checkpoint
+config_version: 1.0
+template_name:
+module_name: great_expectations.checkpoint
+class_name: Checkpoint
+run_name_template: "%Y%m%d-%H%M%S-my-run-name-template"
+expectation_suite_name:
+batch_request: {}
+action_list:
+  - name: store_validation_result
+    action:
+      class_name: StoreValidationResultAction
+  - name: store_evaluation_params
+    action:
+      class_name: StoreEvaluationParametersAction
+  - name: update_data_docs
+    action:
+      class_name: UpdateDataDocsAction
+      site_names: []
+  - name: send_slack_notification_on_validation_result
+    # https://docs.greatexpectations.io/docs/guides/validation/validation_actions/how_to_trigger_slack_notifications_as_a_validation_action/#webhook-config
+    action:
+      class_name: SlackNotificationAction
+      slack_webhook: ${MATTERMOST_WEBHOOK}
+      notify_on: all
+      notify_with:
+      renderer:
+        module_name: great_expectations.render.renderer.slack_renderer
+        class_name: SlackRenderer
+evaluation_parameters: {}
+runtime_configuration: {}
+validations:
+  - batch_request:
+      datasource_name: data_inclusion_datasources
+      data_connector_name: default_runtime_data_connector_name
+    expectation_suite_name: schema_suite
+profilers: []
+ge_cloud_id:
+expectation_suite_ge_cloud_id:
