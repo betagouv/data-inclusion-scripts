@@ -22,8 +22,10 @@ def process(source_label: str, format: DataFormat, url: str):
         df = pd.read_csv(url)
 
     # validation
-    if not validate_schema(source_label="dora", df=df):
-        logger.info("Schéma invalide. Ignoré.")
+    if not validate_schema(source_label=source_label, df=df):
+        logger.info("Les données ne respectent pas le schéma de l'inclusion")
         return
+    else:
+        logger.info("Les données sont conformes.")
 
     # TODO(vmttn): envoi sur data inclusion

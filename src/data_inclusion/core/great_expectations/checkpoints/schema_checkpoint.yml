@@ -17,16 +17,16 @@ action_list:
     action:
       class_name: UpdateDataDocsAction
       site_names: []
-  - name: send_slack_notification_on_validation_result
-    # https://docs.greatexpectations.io/docs/guides/validation/validation_actions/how_to_trigger_slack_notifications_as_a_validation_action/#webhook-config
-    action:
-      class_name: SlackNotificationAction
-      slack_webhook: ${MATTERMOST_WEBHOOK}
-      notify_on: all
-      notify_with:
-      renderer:
-        module_name: great_expectations.render.renderer.slack_renderer
-        class_name: SlackRenderer
+  # - name: send_slack_notification_on_validation_result
+  #   # https://docs.greatexpectations.io/docs/guides/validation/validation_actions/how_to_trigger_slack_notifications_as_a_validation_action/#webhook-config
+  #   action:
+  #     class_name: SlackNotificationAction
+  #     slack_webhook: ${MATTERMOST_WEBHOOK}
+  #     notify_on: all
+  #     notify_with:
+  #     renderer:
+  #       module_name: great_expectations.render.renderer.slack_renderer
+  #       class_name: SlackRenderer
 evaluation_parameters: {}
 runtime_configuration: {}
 validations:
