@@ -12,7 +12,7 @@ data-inclusion -vv import csv local-example-ok ./examples/valid_data.csv
 data-inclusion -vv import csv local-example-ko ./examples/invalid_data.csv
 ```
 
-Les scripts sont exécutés régulièrement via le scheduler de Scalingo. La configuration associée se trouve dans le fichier `./cron.json`.
+Les scripts sont exécutés régulièrement grâce à la ci de github (cf [`.github/workflows/main.yml`](.github/workflows/main.yml)).
 
 ## Développement
 

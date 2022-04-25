@@ -1,0 +1,28 @@
+name: main
+
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+    branches:
+      - "main"
+  schedule:
+    - cron: "0 11 * * 1-5"
+
+jobs:
+  process:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+      - name: Installation des scripts
+        run: |
+          pip install -U pip setuptools wheel
+          pip install -e .
+      - name: Processing des données ouvertes
+        run: |
+          data-inclusion -vv import csv dora https://www.data.gouv.fr/fr/datasets/r/fd4cb3ef-5c31-4c99-92fe-2cd8016c0ca5
