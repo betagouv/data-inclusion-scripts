@@ -5,19 +5,29 @@ Ce dépôt contient des workflows pour le traitement des données de l'inclusion
 ## Usage
 
 ```bash
-data-inclusion -vv import {csv|json} <NOM_DE_SOURCE> <URL_OU_CHEMIN_VERS_UN_JEU_DE_DONNEES>
+$ data-inclusion import --help
+Usage: data-inclusion import [OPTIONS] SRC DI_API_URL
 
-# exemple
-data-inclusion -vv import csv local-example-ok ./examples/valid_data.csv
-data-inclusion -vv import csv local-example-ko ./examples/invalid_data.csv
+  Extract, (transform,) validate and load data from a given source to data-
+  inclusion
+
+Options:
+  --format [csv|json]         [default: json]
+  --src-type [dora|standard]  [default: standard]
+  -n, --dry-run
+  --help                      Show this message and exit.
+
+# exemples
+$ data-inclusion validate --format csv ./examples/valid_data.csv
+$ data-inclusion validate --format csv ./examples/invalid_data.csv
 ```
 
 Les scripts sont exécutés régulièrement grâce à la ci de github (cf [`.github/workflows/main.yml`](.github/workflows/main.yml)).
 
 ## Développement
 
+* Les scripts ont vocation à être via différent points d'entrée (i.e. CLI, Airflow)
 * `great-expectations` est utilisé pour le moment pour la validation du schéma de l'inclusion
-* Les scripts ont vocation à être via différent points d'entrée (CLI, Airflow)
 
 ## [Auteurs](CODEOWNERS)
 

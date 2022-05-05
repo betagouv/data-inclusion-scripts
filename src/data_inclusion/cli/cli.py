@@ -2,7 +2,7 @@ import logging
 
 import click
 
-from data_inclusion.core import service
+from data_inclusion.tasks import process
 
 
 @click.group()
@@ -13,14 +13,65 @@ def cli(verbose: int):
     logging.basicConfig(level=[logging.INFO, logging.INFO, logging.DEBUG][verbose])
 
 
-@cli.command(name="import")
-@click.argument("format", type=click.Choice(list(service.DataFormat)))
-@click.argument("source_label", type=click.STRING)
-@click.argument("url", type=click.STRING)
-def import_(source_label: str, format: str, url: str):
-    "import data"
-    service.process(
-        source_label=source_label,
+@cli.command(name="validate")
+@click.argument("src", type=click.STRING)
+@click.option(
+    "--format",
+    type=click.Choice(list(process.DataFormat)),
+    default=process.DataFormat.JSON.value,
+    show_default=True,
+)
+@click.option(
+    "--src-type",
+    type=click.Choice(list(process.SourceType)),
+    default=process.SourceType.STANDARD.value,
+    show_default=True,
+)
+def validate(
+    src: str,
+    format: process.DataFormat,
+    src_type: process.SourceType,
+):
+    "Extract, transform and validate data from a given source"
+    process.process_inclusion_dataset(
+        src=src,
+        src_type=src_type,
         format=format,
-        url=url,
+    )
+
+
+@cli.command(name="import")
+@click.argument("src", type=click.STRING)
+@click.argument("di-api-url")
+@click.option(
+    "--format",
+    type=click.Choice(list(process.DataFormat)),
+    default=process.DataFormat.JSON.value,
+    show_default=True,
+)
+@click.option(
+    "--src-type",
+    type=click.Choice(list(process.SourceType)),
+    default=process.SourceType.STANDARD.value,
+    show_default=True,
+)
+@click.option(
+    "-n",
+    "--dry-run",
+    is_flag=True,
+    default=False,
+)
+def import_(
+    src: str,
+    di_api_url: str,
+    format: process.DataFormat,
+    src_type: process.SourceType,
+    dry_run: bool,
+):
+    "Extract, (transform,) validate and load data from a given source to data-inclusion"
+    process.process_inclusion_dataset(
+        src=src,
+        di_api_url=di_api_url,
+        src_type=src_type,
+        format=format,
     )

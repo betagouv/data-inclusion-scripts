@@ -11,8 +11,7 @@
           "adresse",
           "code_postal",
           "commune",
-          "code_insee",
-          "typologie"
+          "code_insee"
         ],
         "exact_match": false
       },
