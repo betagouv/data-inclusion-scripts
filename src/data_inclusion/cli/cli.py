@@ -71,7 +71,7 @@ def import_(
     "Extract, (transform,) validate and load data from a given source to data-inclusion"
     process.process_inclusion_dataset(
         src=src,
-        di_api_url=di_api_url,
+        di_api_url=di_api_url if not dry_run else None,
         src_type=src_type,
         format=format,
     )
