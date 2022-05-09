@@ -34,4 +34,7 @@ def load_to_data_inclusion(df: pd.DataFrame, api_url: str):
     for _, row in tqdm(df.iterrows(), total=len(df)):
         # sérialisation/désérialisation pour profiter du fait que
         # `.to_json()` convertit les `np.nan` en `null`
-        client.report_structure(data=json.loads(row.to_json()))
+        try:
+            client.report_structure(data=json.loads(row.to_json()))
+        except requests.HTTPError:
+            continue
