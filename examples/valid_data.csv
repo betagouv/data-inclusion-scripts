@@ -1,2 +1,2 @@
-id,nom,adresse,code_postal,commune,code_insee,typologie
-0,UNE ASSO TRES SYMPA,10 RUE DU CŒUR-JOYEUX,59000,LILLE,59350,
+id,nom,adresse,code_postal,commune,code_insee,typologie,date_maj
+0,UNE ASSO TRES SYMPA,10 RUE DU CŒUR-JOYEUX,59000,LILLE,59350,,2022-05-09T21:55:32+02:00

@@ -24,7 +24,7 @@ class DataInclusionAPIV0Client:
         self.session.hooks["response"] = [log_and_raise]
 
     def report_structure(self, data: dict):
-        resp = self.session.post(f"{self.base_url}/reports/", json=data)
+        resp = self.session.post(f"{self.base_url}/reports/", data=data)
         return resp.json()
 
 

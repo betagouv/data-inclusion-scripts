@@ -3,6 +3,7 @@ import logging
 from typing import Optional
 
 import pandas as pd
+import numpy as np
 
 from data_inclusion.tasks.transform import dora
 from data_inclusion.tasks import load, validate
@@ -40,9 +41,9 @@ def extract(src: str, format: DataFormat) -> pd.DataFrame:
     if format == DataFormat.JSON:
         df = pd.read_json(src, dtype=False)
     else:
-        df = pd.read_csv(src)
+        df = pd.read_csv(src).replace(["", np.nan], None)
 
-    return df
+    return df.set_index("id")
 
 
 def process_inclusion_dataset(
@@ -50,22 +51,20 @@ def process_inclusion_dataset(
     di_api_url: Optional[str] = None,
     src_type: SourceType = SourceType.STANDARD,
     format: DataFormat = DataFormat.JSON,
+    error_output_path: Optional[str] = None,
 ):
-    # extraction
+    logger.info("Extraction...")
     df = extract(src=src, format=format)
 
-    # transformation
+    logger.info("Transformation...")
     df = TRANSFORM_TASKS[src_type](df)
 
-    # validation
-    if not validate.validate_schema(df=df, src_name=src):
-        logger.info("Les données ne respectent pas le schéma de l'inclusion")
-        return
-    else:
-        logger.info("Les données sont conformes.")
+    logger.info("Validation...")
+    df, errors_df = validate.validate(df)
 
-    if di_api_url is None:
-        return
+    if di_api_url is not None:
+        logger.info("Versement...")
+        load.load_to_data_inclusion(df.loc[df.is_valid], api_url=di_api_url)
 
-    # versement
-    load.load_to_data_inclusion(df, api_url=di_api_url)
+    if error_output_path is not None:
+        errors_df.to_csv(error_output_path)

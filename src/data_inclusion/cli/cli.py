@@ -27,16 +27,19 @@ def cli(verbose: int):
     default=process.SourceType.STANDARD.value,
     show_default=True,
 )
+@click.option("--error-output-path", type=click.Path())
 def validate(
     src: str,
     format: process.DataFormat,
     src_type: process.SourceType,
+    error_output_path: str,
 ):
-    "Extract, transform and validate data from a given source"
+    "Extract, (transform,) and validate data from a given source"
     process.process_inclusion_dataset(
         src=src,
         src_type=src_type,
         format=format,
+        error_output_path=error_output_path,
     )
 
 
@@ -61,12 +64,14 @@ def validate(
     is_flag=True,
     default=False,
 )
+@click.option("--error-output-path", type=click.Path())
 def import_(
     src: str,
     di_api_url: str,
     format: process.DataFormat,
     src_type: process.SourceType,
     dry_run: bool,
+    error_output_path: str,
 ):
     "Extract, (transform,) validate and load data from a given source to data-inclusion"
     process.process_inclusion_dataset(
@@ -74,4 +79,5 @@ def import_(
         di_api_url=di_api_url if not dry_run else None,
         src_type=src_type,
         format=format,
+        error_output_path=error_output_path,
     )

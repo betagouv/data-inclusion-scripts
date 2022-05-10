@@ -1,3 +1,5 @@
+from datetime import datetime
+import pytz
 import re
 
 import pandas as pd
@@ -8,6 +10,15 @@ DORA_SOURCE = "dora"
 
 
 def transform_data(df: pd.DataFrame) -> pd.DataFrame:
+    """Convertit les données du format DORA vers le format standard.
+
+    Args:
+        df: Un dataframe contenant des données de structures au format de DORA.
+
+    Returns:
+        Un dataframe contenant les mêmes données converties au format standard à priori.
+    """
+
     return (
         df.rename(columns=lambda h: re.sub(r"(?<!^)(?=[A-Z])", "_", h).lower())
         .drop(
@@ -37,22 +48,20 @@ def transform_data(df: pd.DataFrame) -> pd.DataFrame:
                 "modification_date": "date_maj",
             }
         )
-        .dropna(
-            subset=[
-                "siret",
-                "nom",
-                "commune",
-                "code_insee",
-                "code_postal",
-                "adresse",
-                "date_maj",
-            ]
-        )
+        # conversion pour simplifier la sérialisation et la manipulation des valeurs
+        # nulles
+        .replace(np.nan, None)
+        # normalisations des chaînes de caractères vides, qui ne sont pas considérées
+        # comme des valeurs nulles du point de vue du schéma standard
+        .replace("", None)
         .assign(
-            typologie=lambda x: pd.Categorical(
-                x.typologie.map(lambda v: v["value"], na_action="ignore")
+            typologie=lambda x: x.typologie.map(
+                lambda v: v["value"] if v is not None else None
             ),
             source=DORA_SOURCE,
-            rna=lambda x: None,
+            rna=None,
+            date_maj=lambda x: x.date_maj.apply(
+                lambda x: datetime.fromisoformat(x).astimezone(pytz.UTC).isoformat()
+            ),
         )
     )
