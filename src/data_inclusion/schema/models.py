@@ -2,7 +2,14 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional
 
-from pydantic import BaseModel, constr, Extra, EmailStr, HttpUrl
+from pydantic import (
+    BaseModel,
+    constr,
+    Extra,
+    EmailStr,
+    HttpUrl,
+    root_validator,
+)
 
 
 class Typologie(str, Enum):
@@ -102,3 +109,9 @@ class Structure(BaseModel):
 
     class Config:
         extra = Extra.forbid
+
+    @root_validator
+    def check_pivots(cls, values: dict) -> dict:
+        if values.get("rna", None) is None and values.get("siret", None) is None:
+            raise ValueError("pivot(s) manquant(s): siret, rna, etc.")
+        return values
