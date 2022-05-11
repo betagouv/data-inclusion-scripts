@@ -3,3 +3,5 @@ max-line-length = 88
 max-doc-length = 88
 extend-exclude = .venv/ .github/ .vscode/
 extend-ignore = E203, W503
+per-file-ignores =
+    src/data_inclusion/schema/models.py:F722

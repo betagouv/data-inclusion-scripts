@@ -2,12 +2,11 @@ import enum
 import logging
 from typing import Optional
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
-from data_inclusion.tasks.transform import dora
 from data_inclusion.tasks import load, validate
-
+from data_inclusion.tasks.transform import dora
 
 logger = logging.getLogger(__name__)
 

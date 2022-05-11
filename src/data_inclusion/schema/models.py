@@ -2,14 +2,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Optional
 
-from pydantic import (
-    BaseModel,
-    constr,
-    Extra,
-    EmailStr,
-    HttpUrl,
-    root_validator,
-)
+from pydantic import BaseModel, EmailStr, Extra, HttpUrl, constr, root_validator
 
 
 class Typologie(str, Enum):
