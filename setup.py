@@ -15,6 +15,8 @@ setup(
         "pydantic[email]==1.9.0",
         "tqdm==4.64.0",
     ],
-    extra_requires={"test": ["pytest==7.1.1"]},
+    extras_require={
+        "test": ["pytest==7.1.1"],
+    },
     entry_points={"console_scripts": ["data-inclusion=data_inclusion.cli.cli:cli"]},
 )
