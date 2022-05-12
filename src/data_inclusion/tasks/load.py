@@ -30,6 +30,9 @@ class DataInclusionAPIV0Client:
 def load_to_data_inclusion(df: pd.DataFrame, api_url: str):
     client = DataInclusionAPIV0Client(base_url=api_url)
 
+    # structures parentes avant antennes
+    df = df.sort_values("structure_parente", na_position="first")
+
     for _, row in tqdm(df.iterrows(), total=len(df)):
         # sérialisation/désérialisation pour profiter du fait que
         # `.to_json()` convertit les `np.nan` en `null`

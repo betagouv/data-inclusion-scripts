@@ -62,5 +62,6 @@ def transform_data(df: pd.DataFrame) -> pd.DataFrame:
             date_maj=lambda x: x.date_maj.apply(
                 lambda x: datetime.fromisoformat(x).astimezone(pytz.UTC).isoformat()
             ),
+            structure_parente=None,
         )
     )

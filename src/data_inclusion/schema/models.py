@@ -97,14 +97,17 @@ class Structure(BaseModel):
     presentation_resume: Optional[constr(max_length=280)]
     presentation_detail: Optional[str]
     source: Optional[str]
-    id_antenne: Optional[str]
     date_maj: datetime
+    structure_parente: Optional[str]
 
     class Config:
         extra = Extra.forbid
 
     @root_validator
-    def check_pivots(cls, values: dict) -> dict:
-        if values.get("rna", None) is None and values.get("siret", None) is None:
-            raise ValueError("pivot(s) manquant(s): siret, rna, etc.")
+    def has_pivot_or_reference_to_parent(cls, values: dict) -> dict:
+        has_rna = values.get("rna", None) is not None
+        has_siret = values.get("siret", None) is not None
+        has_reference = values.get("structure_parente", None) is not None
+        if not (has_rna or has_siret or has_reference):
+            raise ValueError("absence de pivot ou de référence à une structure parente")
         return values

@@ -19,11 +19,16 @@ def validate_row(data: dict) -> Optional[list]:
 
 
 def validate_df(df: pd.DataFrame) -> pd.DataFrame:
-    return (
+    # valide les lignes individuellement
+    df = (
         df.reset_index()
         .assign(errors=lambda x: x.apply(validate_row, axis=1))
         .set_index("id")
     )
+    # valide les références au sein du dataframe
+    # TODO(vmttn)
+
+    return df
 
 
 def validate(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
