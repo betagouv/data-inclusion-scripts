@@ -25,4 +25,4 @@ jobs:
           pip install -e .
       - name: Import vers staging
         run: |
-          data-inclusion import --src-type dora https://api.dora.incubateur.net/api/v1/structures/ ${{ secrets.DI_API_STAGING_URL }}
+          data-inclusion import --src-type dora https://api.dora.fabrique.social.gouv.fr/api/v1/structures/ ${{ secrets.DI_API_STAGING_URL }}
