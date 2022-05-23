@@ -63,7 +63,9 @@ def process_inclusion_dataset(
 
     if di_api_url is not None:
         logger.info("Versement...")
-        load.load_to_data_inclusion(df.loc[df.is_valid], api_url=di_api_url)
+        load.load_to_data_inclusion(
+            df.loc[df.is_valid].drop(columns=["is_valid"]), api_url=di_api_url
+        )
 
     if error_output_path is not None:
         errors_df.to_csv(error_output_path)
