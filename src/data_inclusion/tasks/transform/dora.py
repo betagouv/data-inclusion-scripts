@@ -63,5 +63,6 @@ def transform_data(df: pd.DataFrame) -> pd.DataFrame:
                 lambda x: datetime.fromisoformat(x).astimezone(pytz.UTC).isoformat()
             ),
             structure_parente=None,
+            horaires_ouverture=None,
         )
     )
