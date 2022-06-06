@@ -25,7 +25,6 @@ def transform_data(df: pd.DataFrame) -> pd.DataFrame:
                 "code_safir_pe",
                 "ape",
                 "creation_date",
-                "link_on_source",
                 "services",
                 "department",
             ]
@@ -45,6 +44,7 @@ def transform_data(df: pd.DataFrame) -> pd.DataFrame:
                 "address1": "adresse",
                 "address2": "complement_adresse",
                 "modification_date": "date_maj",
+                "link_on_source": "lien_source",
             }
         )
         # conversion pour simplifier la sérialisation et la manipulation des valeurs
