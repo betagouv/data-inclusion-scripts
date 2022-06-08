@@ -26,3 +26,8 @@ jobs:
       - name: Import vers staging
         run: |
           data-inclusion import --src-type dora https://api.dora.fabrique.social.gouv.fr/api/v1/structures/ ${{ secrets.DI_API_STAGING_URL }}
+      - name: Import vers prod
+        env:
+          DI_API_TOKEN: ${{ secrets.DI_API_PROD_TOKEN }}
+        run: |
+          data-inclusion import --src-type dora https://api.dora.fabrique.social.gouv.fr/api/v1/structures/ ${{ secrets.DI_API_PROD_URL }}
