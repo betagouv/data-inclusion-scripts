@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 import click
 
@@ -47,6 +48,10 @@ def validate(
 @click.argument("src", type=click.STRING)
 @click.argument("di-api-url")
 @click.option(
+    "--di-api-token",
+    envvar="DI_API_TOKEN",
+)
+@click.option(
     "--format",
     type=click.Choice(list(process.DataFormat)),
     default=process.DataFormat.JSON.value,
@@ -67,7 +72,8 @@ def validate(
 @click.option("--error-output-path", type=click.Path())
 def import_(
     src: str,
-    di_api_url: str,
+    di_api_url: Optional[str],
+    di_api_token: str,
     format: process.DataFormat,
     src_type: process.SourceType,
     dry_run: bool,
@@ -77,6 +83,7 @@ def import_(
     process.process_inclusion_dataset(
         src=src,
         di_api_url=di_api_url if not dry_run else None,
+        di_api_token=di_api_token,
         src_type=src_type,
         format=format,
         error_output_path=error_output_path,

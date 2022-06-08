@@ -51,6 +51,7 @@ def process_inclusion_dataset(
     src_type: SourceType = SourceType.STANDARD,
     format: DataFormat = DataFormat.JSON,
     error_output_path: Optional[str] = None,
+    di_api_token: Optional[str] = None,
 ):
     logger.info("Extraction...")
     df = extract(src=src, format=format)
@@ -64,7 +65,9 @@ def process_inclusion_dataset(
     if di_api_url is not None:
         logger.info("Versement...")
         load.load_to_data_inclusion(
-            df.loc[df.is_valid].drop(columns=["is_valid"]), api_url=di_api_url
+            df.loc[df.is_valid].drop(columns=["is_valid"]),
+            api_url=di_api_url,
+            api_token=di_api_token,
         )
 
     if error_output_path is not None:

@@ -1,5 +1,6 @@
 import json
 import logging
+from typing import Optional
 
 import pandas as pd
 import requests
@@ -17,18 +18,23 @@ def log_and_raise(resp: requests.Response, *args, **kwargs):
 
 
 class DataInclusionAPIV0Client:
-    def __init__(self, base_url: str) -> None:
+    def __init__(self, base_url: str, token: Optional[str] = None):
         self.base_url = base_url.rstrip("/") + "/v0"
         self.session = requests.Session()
         self.session.hooks["response"] = [log_and_raise]
+        self.session.headers.update({"Authorization": f"Bearer {token}"})
 
     def report_structure(self, data: dict):
         resp = self.session.post(f"{self.base_url}/reports/", data=data)
         return resp.json()
 
 
-def load_to_data_inclusion(df: pd.DataFrame, api_url: str):
-    client = DataInclusionAPIV0Client(base_url=api_url)
+def load_to_data_inclusion(
+    df: pd.DataFrame,
+    api_url: str,
+    api_token: Optional[str],
+):
+    client = DataInclusionAPIV0Client(base_url=api_url, token=api_token)
 
     # serialise les identifiants
     df = df.reset_index()
@@ -40,5 +46,7 @@ def load_to_data_inclusion(df: pd.DataFrame, api_url: str):
         # `.to_json()` convertit les `np.nan` en `null`
         try:
             client.report_structure(data=json.loads(row.to_json()))
-        except requests.HTTPError:
-            continue
+        except requests.RequestException as e:
+            if e.response and e.response.status_code == 400:
+                continue
+            raise SystemExit(e)
