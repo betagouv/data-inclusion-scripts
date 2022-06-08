@@ -22,7 +22,8 @@ class DataInclusionAPIV0Client:
         self.base_url = base_url.rstrip("/") + "/v0"
         self.session = requests.Session()
         self.session.hooks["response"] = [log_and_raise]
-        self.session.headers.update({"Authorization": f"Bearer {token}"})
+        if token is not None:
+            self.session.headers.update({"Authorization": f"Bearer {token}"})
 
     def report_structure(self, data: dict):
         resp = self.session.post(f"{self.base_url}/reports/", data=data)
