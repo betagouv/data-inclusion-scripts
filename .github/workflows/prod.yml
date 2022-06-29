@@ -1,12 +1,9 @@
 name: main
 
 on:
-  push:
-    branches:
-      - "main"
-  pull_request:
-    branches:
-      - "main"
+  schedule:
+    # run on last commit of the default branch (main)
+    - cron: "0 11 * * 1-5"
 
 jobs:
   process:
@@ -21,8 +18,9 @@ jobs:
         run: |
           pip install -U pip setuptools wheel
           pip install -e .
-      - name: Import vers staging
+      - name: Import vers prod
         env:
-          DI_API_URL: ${{ secrets.DI_API_STAGING_URL }}
+          DI_API_URL: ${{ secrets.DI_API_PROD_URL }}
+          DI_API_TOKEN: ${{ secrets.DI_API_PROD_TOKEN }}
         run: |
           data-inclusion import --src-type dora https://api.dora.fabrique.social.gouv.fr/api/v1/structures/
