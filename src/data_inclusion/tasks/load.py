@@ -6,6 +6,8 @@ import pandas as pd
 import requests
 from tqdm import tqdm
 
+from data_inclusion import settings
+
 logger = logging.getLogger(__name__)
 
 
@@ -30,12 +32,17 @@ class DataInclusionAPIV0Client:
         return resp.json()
 
 
-def load_to_data_inclusion(
-    df: pd.DataFrame,
-    api_url: str,
-    api_token: Optional[str],
-):
-    client = DataInclusionAPIV0Client(base_url=api_url, token=api_token)
+def load_to_data_inclusion(df: pd.DataFrame):
+    if settings.DI_API_URL is None:
+        logger.error(
+            "La variable d'environnement DI_API_URL doit être configurée pour verser "
+            "les données dans data.inclusion"
+        )
+        raise SystemExit()
+
+    client = DataInclusionAPIV0Client(
+        base_url=settings.DI_API_URL, token=settings.DI_API_TOKEN
+    )
 
     # serialise les identifiants
     df = df.reset_index()

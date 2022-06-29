@@ -1,9 +1,11 @@
 import logging
-from typing import Optional
 
 import click
 
-from data_inclusion.tasks import process
+from data_inclusion import settings
+from data_inclusion.tasks import geocoding, process
+
+logger = logging.getLogger(__name__)
 
 
 @click.group()
@@ -14,8 +16,9 @@ def cli(verbose: int):
     logging.basicConfig(level=[logging.INFO, logging.INFO, logging.DEBUG][verbose])
 
 
-@cli.command(name="validate")
+@cli.command(name="preprocess")
 @click.argument("src", type=click.STRING)
+@click.argument("output-path", type=click.Path())
 @click.option(
     "--format",
     type=click.Choice(list(process.DataFormat)),
@@ -25,32 +28,42 @@ def cli(verbose: int):
 @click.option(
     "--src-type",
     type=click.Choice(list(process.SourceType)),
-    default=process.SourceType.STANDARD.value,
+    default=process.SourceType.V0.value,
     show_default=True,
 )
-@click.option("--error-output-path", type=click.Path())
-def validate(
+def preprocess(
     src: str,
     format: process.DataFormat,
     src_type: process.SourceType,
-    error_output_path: str,
+    output_path: str,
 ):
-    "Extract, (transform,) and validate data from a given source"
-    process.process_inclusion_dataset(
+    "Extract from the given datasource and reshape the data to data.inclusion format."
+    df = process.preprocess_datasource(
         src=src,
         src_type=src_type,
         format=format,
+    )
+
+    logger.info(f"Writing preprocessed file to {output_path}")
+    df.to_json(output_path, orient="records")
+
+
+@cli.command(name="validate")
+@click.argument("filepath", type=click.Path(exists=True, readable=True))
+@click.option("--error-output-path", type=click.Path())
+def validate(
+    filepath: str,
+    error_output_path: str,
+):
+    "Validate a data file that should be structured in the data.inclusion format."
+    process.validate_normalized_dataset(
+        filepath=filepath,
         error_output_path=error_output_path,
     )
 
 
 @cli.command(name="import")
 @click.argument("src", type=click.STRING)
-@click.argument("di-api-url")
-@click.option(
-    "--di-api-token",
-    envvar="DI_API_TOKEN",
-)
 @click.option(
     "--format",
     type=click.Choice(list(process.DataFormat)),
@@ -60,7 +73,7 @@ def validate(
 @click.option(
     "--src-type",
     type=click.Choice(list(process.SourceType)),
-    default=process.SourceType.STANDARD.value,
+    default=process.SourceType.V0.value,
     show_default=True,
 )
 @click.option(
@@ -72,19 +85,19 @@ def validate(
 @click.option("--error-output-path", type=click.Path())
 def import_(
     src: str,
-    di_api_url: Optional[str],
-    di_api_token: str,
     format: process.DataFormat,
     src_type: process.SourceType,
     dry_run: bool,
     error_output_path: str,
 ):
     "Extract, (transform,) validate and load data from a given source to data-inclusion"
-    process.process_inclusion_dataset(
+    process.process_datasource(
         src=src,
-        di_api_url=di_api_url if not dry_run else None,
-        di_api_token=di_api_token,
         src_type=src_type,
         format=format,
         error_output_path=error_output_path,
+        dry_run=dry_run,
+        geocoding_backend=geocoding.BaseAdresseNationaleBackend(
+            base_url=settings.BAN_API_URL
+        ),
     )

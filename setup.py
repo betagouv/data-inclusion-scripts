@@ -13,6 +13,7 @@ setup(
         "requests==2.27.1",
         "pydantic[email]==1.9.0",
         "tqdm==4.64.0",
+        "urllib3==1.26.9",
     ],
     extras_require={
         "test": ["pytest==7.1.1"],

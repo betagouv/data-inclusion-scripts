@@ -4,40 +4,49 @@ Ce dépôt contient des workflows pour le traitement des données de l'inclusion
 
 ## Usage
 
+### `data-inclusion preprocess`
+
+```bash
+$ data-inclusion preprocess --help
+Usage: data-inclusion preprocess [OPTIONS] SRC OUTPUT_PATH
+
+  Extract from the given datasource and reshape the data to data.inclusion
+  format.
+
+Options:
+  --format [csv|json]        [default: json]
+  --src-type [dora|itou|v0]  [default: v0]
+  --help                     Show this message and exit.
+```
+
 ### `data-inclusion validate`
 
 ```bash
 $ data-inclusion validate --help
-Usage: data-inclusion validate [OPTIONS] SRC
+Usage: data-inclusion validate [OPTIONS] FILEPATH
 
-  Extract, (transform,) and validate data from a given source
+  Validate a data file that should be structured in the data.inclusion format.
 
 Options:
-  --format [csv|json]         [default: json]
-  --src-type [dora|standard]  [default: standard]
   --error-output-path PATH
-  --help                      Show this message and exit.
-
-# exemples
-$ data-inclusion validate --format csv ./examples/valid_data.csv
-$ data-inclusion validate --format csv ./examples/invalid_data.csv
+  --help                    Show this message and exit.
 ```
 
 ### `data-inclusion import`
 
 ```bash
 $ data-inclusion import --help
-Usage: data-inclusion import [OPTIONS] SRC DI_API_URL
+Usage: data-inclusion import [OPTIONS] SRC
 
   Extract, (transform,) validate and load data from a given source to data-
-  inclusion
+  inclusion.
 
 Options:
-  --format [csv|json]         [default: json]
-  --src-type [dora|standard]  [default: standard]
+  --format [csv|json]        [default: json]
+  --src-type [dora|itou|v0]  [default: v0]
   -n, --dry-run
   --error-output-path PATH
-  --help                      Show this message and exit.
+  --help                     Show this message and exit.
 ```
 
 Les scripts sont exécutés régulièrement grâce à la ci de github (cf [`.github/workflows/main.yml`](.github/workflows/main.yml)).

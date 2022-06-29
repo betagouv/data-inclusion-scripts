@@ -9,7 +9,7 @@ DORA_SOURCE = "dora"
 
 
 def transform_data(df: pd.DataFrame) -> pd.DataFrame:
-    """Convertit les données du format DORA vers le format standard.
+    """Convertit les données du format DORA vers le format standard v0.
 
     Args:
         df: Un dataframe contenant des données de structures au format de DORA.
