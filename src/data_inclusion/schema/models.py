@@ -85,7 +85,7 @@ class Structure(BaseModel):
     nom: str
     commune: str
     code_postal: constr(min_length=5, max_length=5, regex=r"^\d{5}$")
-    code_insee: constr(min_length=5, max_length=5)
+    code_insee: Optional[constr(min_length=5, max_length=5)]
     adresse: str
     complement_adresse: Optional[str]
     longitude: Optional[float]
