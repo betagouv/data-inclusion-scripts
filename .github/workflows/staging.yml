@@ -1,4 +1,4 @@
-name: main
+name: staging
 
 on:
   push:
@@ -21,10 +21,14 @@ jobs:
         run: |
           pip install -U pip setuptools wheel
           pip install -e .
-      - name: Import vers staging
+      - name: Import dora vers staging
+        env:
+          DI_API_URL: ${{ secrets.DI_API_STAGING_URL }}
+        run: |
+          data-inclusion import --src-type dora https://api.dora.fabrique.social.gouv.fr/api/v1/structures/
+      - name: Import itou vers staging
         env:
           DI_API_URL: ${{ secrets.DI_API_STAGING_URL }}
           ITOU_API_TOKEN: ${{ secrets.ITOU_API_TOKEN }}
         run: |
-          data-inclusion import --src-type dora https://api.dora.fabrique.social.gouv.fr/api/v1/structures/
           data-inclusion import --src-type itou https://emplois.inclusion.beta.gouv.fr/api/v1/structures/

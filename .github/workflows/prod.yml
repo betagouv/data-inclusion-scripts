@@ -18,11 +18,16 @@ jobs:
         run: |
           pip install -U pip setuptools wheel
           pip install -e .
-      - name: Import vers prod
+      - name: Import dora vers prod
+        env:
+          DI_API_URL: ${{ secrets.DI_API_PROD_URL }}
+          DI_API_TOKEN: ${{ secrets.DI_API_PROD_TOKEN }}
+        run: |
+          data-inclusion import --src-type dora https://api.dora.fabrique.social.gouv.fr/api/v1/structures/
+      - name: Import itou vers prod
         env:
           DI_API_URL: ${{ secrets.DI_API_PROD_URL }}
           DI_API_TOKEN: ${{ secrets.DI_API_PROD_TOKEN }}
           ITOU_API_TOKEN: ${{ secrets.ITOU_API_TOKEN }}
         run: |
-          data-inclusion import --src-type dora https://api.dora.fabrique.social.gouv.fr/api/v1/structures/
           data-inclusion import --src-type itou https://emplois.inclusion.beta.gouv.fr/api/v1/structures/
