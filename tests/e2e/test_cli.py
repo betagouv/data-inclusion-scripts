@@ -104,6 +104,7 @@ def test_preprocess_dora_dataset():
             {
                 "siret": "44321878900032",
                 "typologie": None,
+                "id": "4e6f9f89-aa6f-4425-aaba-2b8f657cd4dd",
                 "nom": "DUMONT FRANCOIS",
                 "presentation_resume": None,
                 "presentation_detail": None,
