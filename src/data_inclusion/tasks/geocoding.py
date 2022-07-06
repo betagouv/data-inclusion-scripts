@@ -88,7 +88,6 @@ def geocode_normalized_dataset(
     df: pd.DataFrame,
     geocoding_backend: GeocodingBackend,
 ) -> pd.DataFrame:
-    df = df.reset_index()
     geocoding_outputs = geocoding_backend.geocode_batch(
         [
             GeocodingInput(
@@ -120,4 +119,4 @@ def geocode_normalized_dataset(
 
     df["code_insee"] = df.apply(fill_code_insee, axis="columns")
 
-    return df.set_index("id")
+    return df

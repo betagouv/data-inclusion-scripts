@@ -49,8 +49,14 @@ def preprocess(
 
 
 @cli.command(name="validate")
-@click.argument("filepath", type=click.Path(exists=True, readable=True))
-@click.option("--error-output-path", type=click.Path())
+@click.argument(
+    "filepath",
+    type=click.Path(exists=True, readable=True),
+)
+@click.option(
+    "--error-output-path",
+    type=click.Path(),
+)
 def validate(
     filepath: str,
     error_output_path: str,
@@ -60,6 +66,29 @@ def validate(
         filepath=filepath,
         error_output_path=error_output_path,
     )
+
+
+@cli.command(name="geocode")
+@click.argument(
+    "filepath",
+    type=click.Path(exists=True, readable=True),
+)
+@click.argument(
+    "output_path",
+    type=click.Path(),
+)
+def geocode(
+    filepath: str,
+    output_path: str,
+):
+    "Geocode a data file that should be structured in the data.inclusion format."
+    df = process.geocode(
+        filepath=filepath,
+        geocoding_backend=geocoding.BaseAdresseNationaleBackend(
+            base_url=settings.BAN_API_URL
+        ),
+    )
+    df.to_json(output_path, orient="records")
 
 
 @cli.command(name="import")

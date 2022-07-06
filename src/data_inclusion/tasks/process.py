@@ -37,10 +37,10 @@ def extract(src: str, format: DataFormat) -> pd.DataFrame:
     else:
         df = pd.read_csv(src).replace(["", np.nan], None)
 
-    return df.set_index("id")
+    return df
 
 
-def process_itou_datasource(
+def preprocess_itou_datasource(
     src: str,
     format: DataFormat = DataFormat.JSON,
 ) -> pd.DataFrame:
@@ -50,7 +50,7 @@ def process_itou_datasource(
     return itou.transform_data(df)
 
 
-def process_dora_datasource(
+def preprocess_dora_datasource(
     src: str,
     format: DataFormat = DataFormat.JSON,
 ) -> pd.DataFrame:
@@ -60,7 +60,7 @@ def process_dora_datasource(
     return dora.transform_data(df)
 
 
-def process_generic_v0_datasource(
+def preprocess_generic_v0_datasource(
     src: str,
     format: DataFormat = DataFormat.JSON,
 ) -> pd.DataFrame:
@@ -69,9 +69,9 @@ def process_generic_v0_datasource(
 
 
 PREPROCESS_BY_SOURCE_TYPE = {
-    SourceType.DORA: process_dora_datasource,
-    SourceType.ITOU: process_itou_datasource,
-    SourceType.V0: process_generic_v0_datasource,
+    SourceType.DORA: preprocess_dora_datasource,
+    SourceType.ITOU: preprocess_itou_datasource,
+    SourceType.V0: preprocess_generic_v0_datasource,
 }
 
 
@@ -80,14 +80,16 @@ def preprocess_datasource(
     src_type: SourceType = SourceType.V0,
     format: DataFormat = DataFormat.JSON,
 ) -> pd.DataFrame:
-    return PREPROCESS_BY_SOURCE_TYPE[src_type](src=src, format=format)
+    return PREPROCESS_BY_SOURCE_TYPE[src_type](src=src, format=format).replace(
+        np.nan, None
+    )
 
 
 def validate_normalized_dataset(
     filepath: str,
     error_output_path: Optional[str] = None,
 ):
-    df = pd.read_json(filepath, dtype=False).replace(np.nan, None).set_index("id")
+    df = pd.read_json(filepath, dtype=False).replace(np.nan, None)
     _, errors_df = validate.validate(df)
 
     if error_output_path is not None:
@@ -110,9 +112,18 @@ def process_datasource(
     logger.info("Validation...")
     df, errors_df = validate.validate(df)
 
+    if error_output_path is not None:
+        errors_df.to_csv(error_output_path)
+
     if not dry_run:
         logger.info("Versement...")
         load.load_to_data_inclusion(df.loc[df.is_valid].drop(columns=["is_valid"]))
 
-    if error_output_path is not None:
-        errors_df.to_csv(error_output_path)
+
+def geocode(
+    filepath: str,
+    geocoding_backend: geocoding.GeocodingBackend,
+) -> pd.DataFrame:
+    df = pd.read_json(filepath, dtype=False).replace(np.nan, None)
+    logger.info("Geocodage...")
+    return geocoding.geocode_normalized_dataset(df, geocoding_backend=geocoding_backend)

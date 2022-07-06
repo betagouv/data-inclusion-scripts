@@ -19,6 +19,18 @@ Options:
   --help                     Show this message and exit.
 ```
 
+### `data-inclusion geocode`
+
+```bash
+$ data-inclusion geocode --help
+Usage: data-inclusion geocode [OPTIONS] FILEPATH OUTPUT_PATH
+
+  Geocode a data file that should be structured in the data.inclusion format.
+
+Options:
+  --help  Show this message and exit.
+```
+
 ### `data-inclusion validate`
 
 ```bash

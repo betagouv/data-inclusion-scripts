@@ -20,11 +20,7 @@ def validate_row(data: dict) -> Optional[list]:
 
 def validate_df(df: pd.DataFrame) -> pd.DataFrame:
     # valide les lignes individuellement
-    df = (
-        df.reset_index()
-        .assign(errors=lambda x: x.apply(validate_row, axis=1))
-        .set_index("id")
-    )
+    df = df.assign(errors=lambda x: x.apply(validate_row, axis=1))
     # valide les références au sein du dataframe
     # TODO(vmttn)
 
@@ -44,7 +40,7 @@ def validate(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     df = validate_df(df)
 
     errors_df = (
-        df.pipe(lambda x: x.reset_index()[["id", "errors"]])
+        df.pipe(lambda x: x[["id", "errors"]])
         .pipe(
             lambda x: pd.json_normalize(
                 x.to_dict(orient="records"), record_path="errors", meta="id"
@@ -57,7 +53,6 @@ def validate(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
                 "type": "type",
             }
         )
-        .set_index("id")
         .pipe(lambda x: x.drop(columns=x.columns[x.columns.str.startswith("ctx.")]))
     )
 

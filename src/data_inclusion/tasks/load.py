@@ -44,8 +44,6 @@ def load_to_data_inclusion(df: pd.DataFrame):
         base_url=settings.DI_API_URL, token=settings.DI_API_TOKEN
     )
 
-    # serialise les identifiants
-    df = df.reset_index()
     # structures parentes avant antennes
     df = df.sort_values("structure_parente", na_position="first")
 

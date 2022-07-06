@@ -6,3 +6,6 @@ DI_API_TOKEN = os.environ.get("DI_API_TOKEN", None)
 
 # Config for the geocoding backend
 BAN_API_URL = os.environ.get("BAN_API_URL", "https://api-adresse.data.gouv.fr/")
+
+# Config for the itou source type
+ITOU_API_TOKEN = os.environ.get("ITOU_API_TOKEN", None)

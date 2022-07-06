@@ -4,7 +4,10 @@ import numpy as np
 import pandas as pd
 import requests
 from requests.adapters import HTTPAdapter
+from tqdm import tqdm
 from urllib3.util.retry import Retry
+
+from data_inclusion import settings
 
 ITOU_SOURCE = "itou"
 
@@ -20,18 +23,31 @@ class ItouClient:
         )
         self.session.mount("http://", adapter)
         self.session.mount("https://", adapter)
+        self.session.headers.update(
+            {"Authorization": f"Token {settings.ITOU_API_TOKEN}"}
+        )
 
     def list_structures(self) -> list:
         next_url = self.url
         structures_data = []
 
+        pbar = None
+
         while True:
             response = self.session.get(next_url)
             data = response.json()
+
+            if pbar is None:
+                pbar = tqdm(total=data["count"], initial=len(data["results"]))
+            else:
+                pbar.update(len(data["results"]))
             structures_data += data["results"]
             next_url = data["next"]
             if next_url is None:
                 break
+
+        if pbar is not None:
+            pbar.close()
 
         return structures_data
 
@@ -39,8 +55,7 @@ class ItouClient:
 def extract_data(src: str) -> pd.DataFrame:
     client = ItouClient(url=src)
     structures_data = client.list_structures()
-    df = pd.DataFrame.from_records(data=structures_data)
-    return df.set_index("id")
+    return pd.DataFrame.from_records(data=structures_data)
 
 
 def transform_data(df: pd.DataFrame) -> pd.DataFrame:
