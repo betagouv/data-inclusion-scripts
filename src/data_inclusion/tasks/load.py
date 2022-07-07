@@ -52,7 +52,7 @@ def load_to_data_inclusion(df: pd.DataFrame):
         # `.to_json()` convertit les `np.nan` en `null`
         try:
             client.report_structure(data=json.loads(row.to_json()))
-        except requests.RequestException as e:
-            if e.response and e.response.status_code == 400:
+        except requests.HTTPError as e:
+            if e.response is not None and e.response.status_code == 400:
                 continue
             raise SystemExit(e)
