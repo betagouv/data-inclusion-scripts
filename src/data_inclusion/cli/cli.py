@@ -45,7 +45,7 @@ def preprocess(
     )
 
     logger.info(f"Writing preprocessed file to {output_path}")
-    df.to_json(output_path, orient="records")
+    df.to_json(output_path, orient="records", force_ascii=False)
 
 
 @cli.command(name="validate")
@@ -88,7 +88,7 @@ def geocode(
             base_url=settings.BAN_API_URL
         ),
     )
-    df.to_json(output_path, orient="records")
+    df.to_json(output_path, orient="records", force_ascii=False)
 
 
 @cli.command(name="import")

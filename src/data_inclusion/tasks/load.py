@@ -51,7 +51,7 @@ def load_to_data_inclusion(df: pd.DataFrame):
         # sérialisation/désérialisation pour profiter du fait que
         # `.to_json()` convertit les `np.nan` en `null`
         try:
-            client.report_structure(data=json.loads(row.to_json()))
+            client.report_structure(data=json.loads(row.to_json(force_ascii=False)))
         except requests.HTTPError as e:
             if e.response is not None and e.response.status_code == 400:
                 continue

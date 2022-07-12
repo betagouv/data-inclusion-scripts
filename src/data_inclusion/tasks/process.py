@@ -5,7 +5,7 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
-from data_inclusion.tasks import dora, geocoding, itou, load, validate
+from data_inclusion.tasks import cd35, dora, geocoding, itou, load, validate
 
 logger = logging.getLogger(__name__)
 
@@ -16,11 +16,13 @@ class SourceType(str, enum.Enum):
     Liste les différents classes de source rencontrées afin de distinguer leurs
     traitements.
 
+    * CD35: données issues du département de l'Ille-et-Vilaine.
     * DORA: données issues de DORA.
     * ITOU: données issues d'ITOU.
     * V0: source générique respectant le schéma de l'inclusion en version v0.
     """
 
+    CD35 = "cd35"
     DORA = "dora"
     ITOU = "itou"
     V0 = "v0"
@@ -68,9 +70,20 @@ def preprocess_generic_v0_datasource(
     return extract(src=src, format=format)
 
 
+def preprocess_cd35_datasource(
+    src: str,
+    format: DataFormat = DataFormat.CSV,
+) -> pd.DataFrame:
+    logger.info("Extraction...")
+    df = cd35.extract_data(src)
+    logger.info("Transformation...")
+    return cd35.transform_data(df)
+
+
 PREPROCESS_BY_SOURCE_TYPE = {
     SourceType.DORA: preprocess_dora_datasource,
     SourceType.ITOU: preprocess_itou_datasource,
+    SourceType.CD35: preprocess_cd35_datasource,
     SourceType.V0: preprocess_generic_v0_datasource,
 }
 
