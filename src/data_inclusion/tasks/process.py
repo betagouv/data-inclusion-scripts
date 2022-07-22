@@ -5,7 +5,15 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
-from data_inclusion.tasks import cd35, dora, geocoding, itou, load, validate
+from data_inclusion.tasks import (
+    cd35,
+    dora,
+    geocoding,
+    itou,
+    load,
+    siretisation,
+    validate,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +45,7 @@ def extract(src: str, format: DataFormat) -> pd.DataFrame:
     if format == DataFormat.JSON:
         df = pd.read_json(src, dtype=False)
     else:
-        df = pd.read_csv(src).replace(["", np.nan], None)
+        df = pd.read_csv(src, dtype=str).replace(["", np.nan], None)
 
     return df
 
@@ -106,7 +114,7 @@ def validate_normalized_dataset(
     _, errors_df = validate.validate(df)
 
     if error_output_path is not None:
-        errors_df.to_csv(error_output_path)
+        errors_df.to_csv(error_output_path, index=False)
 
 
 def process_datasource(
@@ -126,7 +134,7 @@ def process_datasource(
     df, errors_df = validate.validate(df)
 
     if error_output_path is not None:
-        errors_df.to_csv(error_output_path)
+        errors_df.to_csv(error_output_path, index=False)
 
     if not dry_run:
         logger.info("Versement...")
@@ -140,3 +148,11 @@ def geocode(
     df = pd.read_json(filepath, dtype=False).replace(np.nan, None)
     logger.info("Geocodage...")
     return geocoding.geocode_normalized_dataset(df, geocoding_backend=geocoding_backend)
+
+
+def siretize(
+    filepath: str,
+) -> pd.DataFrame:
+    df = pd.read_json(filepath, dtype=False).replace(np.nan, None)
+    logger.info("Siretisation...")
+    return siretisation.siretize_normalized_dataset(df)

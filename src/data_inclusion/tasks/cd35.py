@@ -11,7 +11,7 @@ CD35_SOURCE_STR = "cd35"
 def extract_data(src: str) -> pd.DataFrame:
     return pd.read_csv(
         src,
-        sep=",",
+        sep=";",
         encoding_errors="replace",
         on_bad_lines="warn",
         dtype=str,
@@ -25,7 +25,7 @@ def transform_data(df: pd.DataFrame) -> pd.DataFrame:
     res = res.assign(id=df.ORG_ID)
 
     # siret
-    res = res.assign(siret=lambda _: df.siret)
+    res = res.assign(siret=None)
 
     # rna
     res = res.assign(rna=None)

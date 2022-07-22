@@ -91,6 +91,24 @@ def geocode(
     df.to_json(output_path, orient="records", force_ascii=False)
 
 
+@cli.command(name="siretize")
+@click.argument(
+    "filepath",
+    type=click.Path(exists=True, readable=True),
+)
+@click.argument(
+    "output_path",
+    type=click.Path(),
+)
+def siretize(
+    filepath: str,
+    output_path: str,
+):
+    "Enhance a data file that should be structured in the data.inclusion with SIRETs."
+    df = process.siretize(filepath=filepath)
+    df.to_json(output_path, orient="records", force_ascii=False)
+
+
 @cli.command(name="import")
 @click.argument("src", type=click.STRING)
 @click.option(

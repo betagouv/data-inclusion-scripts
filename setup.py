@@ -10,8 +10,9 @@ setup(
     install_requires=[
         "click==8.0.3",
         "pandas==1.4.2",
-        "requests==2.27.1",
         "pydantic[email]==1.9.0",
+        "requests==2.27.1",
+        "SQLAlchemy==1.4.39",
         "tqdm==4.64.0",
         "urllib3==1.26.9",
     ],
