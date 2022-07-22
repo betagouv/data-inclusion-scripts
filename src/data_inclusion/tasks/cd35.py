@@ -63,7 +63,7 @@ def transform_data(input_df: pd.DataFrame) -> pd.DataFrame:
     }
     output_df = output_df.assign(
         typologie=lambda _: input_df.ORG_SIGLE.map(
-            lambda s: DI_STRUCT_TYPE_BY_SIGLE.get(s, None)
+            lambda s: DI_STRUCT_TYPE_BY_SIGLE.get(s, None) or s
         )
     )
 
