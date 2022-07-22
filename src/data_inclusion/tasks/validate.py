@@ -19,9 +19,10 @@ def validate_row(data: dict) -> Optional[list]:
 
 
 def validate_df(df: pd.DataFrame) -> pd.DataFrame:
-    # valide les lignes individuellement
+    # validate individual rows
     df = df.assign(errors=lambda x: x.apply(validate_row, axis=1))
-    # valide les références au sein du dataframe
+
+    # validate frame globally : siret unicity, etc.
     # TODO(vmttn)
 
     return df

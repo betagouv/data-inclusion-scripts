@@ -41,15 +41,15 @@ def load_to_data_inclusion(df: pd.DataFrame):
         raise SystemExit()
 
     client = DataInclusionAPIV0Client(
-        base_url=settings.DI_API_URL, token=settings.DI_API_TOKEN
+        base_url=settings.DI_API_URL,
+        token=settings.DI_API_TOKEN,
     )
 
-    # structures parentes avant antennes
+    # antennas will be sent after their parent structures
     df = df.sort_values("structure_parente", na_position="first")
 
     for _, row in tqdm(df.iterrows(), total=len(df)):
-        # sérialisation/désérialisation pour profiter du fait que
-        # `.to_json()` convertit les `np.nan` en `null`
+        # serialize/deserialize to ensure `np.nan` are converted to `null`
         try:
             client.report_structure(data=json.loads(row.to_json(force_ascii=False)))
         except requests.HTTPError as e:

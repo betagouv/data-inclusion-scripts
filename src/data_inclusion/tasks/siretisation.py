@@ -9,7 +9,6 @@ from tqdm import tqdm
 
 from data_inclusion import settings
 
-logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 tqdm.pandas()

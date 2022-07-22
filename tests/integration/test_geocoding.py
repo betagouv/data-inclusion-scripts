@@ -4,6 +4,8 @@ import pytest
 
 from data_inclusion.tasks import geocoding
 
+pytestmark = pytest.mark.ban_api
+
 
 @pytest.fixture
 def ban_backend():

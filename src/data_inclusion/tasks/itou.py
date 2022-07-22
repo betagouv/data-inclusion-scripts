@@ -9,7 +9,7 @@ from urllib3.util.retry import Retry
 
 from data_inclusion import settings
 
-ITOU_SOURCE = "itou"
+ITOU_SOURCE_STR = "itou"
 
 logger = logging.getLogger(__name__)
 
@@ -58,26 +58,13 @@ def extract_data(src: str) -> pd.DataFrame:
     return pd.DataFrame.from_records(data=structures_data)
 
 
-def transform_data(df: pd.DataFrame) -> pd.DataFrame:
-    """Convertit les données exposée par ITOU vers le format standard v0.
+def transform_data(input_df: pd.DataFrame) -> pd.DataFrame:
+    # data exposed by itou should be serialized in the data.inclusion schema
+    output_df = input_df.copy(deep=True)
 
-    Args:
-        df: Un dataframe contenant des données de structures dans le format proposé sur
-        l'api des emplois de l'inclusion.
+    # source
+    output_df = output_df.assign(source=ITOU_SOURCE_STR)
 
-    Returns:
-        Un dataframe contenant les mêmes données converties au format standard à priori.
-    """
+    output_df = output_df.replace([np.nan, ""], None)
 
-    df = (
-        # conversion pour simplifier la sérialisation et la manipulation des valeurs
-        # nulles
-        df.replace(np.nan, None)
-        # normalisations des chaînes de caractères vides, qui ne sont pas considérées
-        # comme des valeurs nulles du point de vue du schéma standard
-        .replace("", None).assign(
-            source=ITOU_SOURCE,
-        )
-    )
-
-    return df
+    return output_df

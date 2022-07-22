@@ -19,21 +19,21 @@ logger = logging.getLogger(__name__)
 
 
 class SourceType(str, enum.Enum):
-    """Les types de source gérés.
+    """Types of datasources.
 
-    Liste les différents classes de source rencontrées afin de distinguer leurs
-    traitements.
+    Different types of source (and their corresponding format) are handled.
 
-    * CD35: données issues du département de l'Ille-et-Vilaine.
-    * DORA: données issues de DORA.
-    * ITOU: données issues d'ITOU.
-    * V0: source générique respectant le schéma de l'inclusion en version v0.
+    Extraction and transformation will vary according to the source.
     """
 
+    # generic source which can be simply extracted (from a file or HTTP endpoint) and
+    # which respects a priori the data.inclusion schema.
+    V0 = "v0"
+
+    # custom sources which requires ad hoc extraction/transformation.
     CD35 = "cd35"
     DORA = "dora"
     ITOU = "itou"
-    V0 = "v0"
 
 
 class DataFormat(str, enum.Enum):
@@ -45,9 +45,9 @@ def extract(src: str, format: DataFormat) -> pd.DataFrame:
     if format == DataFormat.JSON:
         df = pd.read_json(src, dtype=False)
     else:
-        df = pd.read_csv(src, dtype=str).replace(["", np.nan], None)
+        df = pd.read_csv(src, dtype=str)
 
-    return df
+    return df.replace(["", np.nan], None)
 
 
 def preprocess_itou_datasource(

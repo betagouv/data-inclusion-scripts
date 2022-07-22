@@ -18,41 +18,41 @@ def extract_data(src: str) -> pd.DataFrame:
     ).replace(["", np.nan], None)
 
 
-def transform_data(df: pd.DataFrame) -> pd.DataFrame:
-    res = pd.DataFrame()
+def transform_data(input_df: pd.DataFrame) -> pd.DataFrame:
+    output_df = pd.DataFrame()
 
     # id
-    res = res.assign(id=df.ORG_ID)
+    output_df = output_df.assign(id=input_df.ORG_ID)
 
     # siret
-    res = res.assign(siret=None)
+    output_df = output_df.assign(siret=None)
 
     # rna
-    res = res.assign(rna=None)
+    output_df = output_df.assign(rna=None)
 
     # nom
-    res = res.assign(nom=df.ORG_NOM)
+    output_df = output_df.assign(nom=input_df.ORG_NOM)
 
     # commune
-    res = res.assign(commune=df.ORG_VILLE)
+    output_df = output_df.assign(commune=input_df.ORG_VILLE)
 
     # code_postal
-    res = res.assign(code_postal=df.ORG_CP)
+    output_df = output_df.assign(code_postal=input_df.ORG_CP)
 
     # code_insee
-    res = res.assign(code_insee=None)
+    output_df = output_df.assign(code_insee=None)
 
     # adresse
-    res = res.assign(adresse=df.ORG_ADRES)
+    output_df = output_df.assign(adresse=input_df.ORG_ADRES)
 
     # complement_adresse
-    res = res.assign(complement_adresse=None)
+    output_df = output_df.assign(complement_adresse=None)
 
     # longitude
-    res = res.assign(longitude=df.ORG_LONGITUDE)
+    output_df = output_df.assign(longitude=input_df.ORG_LONGITUDE)
 
     # latitude
-    res = res.assign(latitude=df.ORG_LATITUDE)
+    output_df = output_df.assign(latitude=input_df.ORG_LATITUDE)
 
     # typologie
     DI_STRUCT_TYPE_BY_SIGLE = {
@@ -61,51 +61,51 @@ def transform_data(df: pd.DataFrame) -> pd.DataFrame:
         "EPHAD": models.Typologie.Autre.value,
         "SAAD": models.Typologie.Autre.value,
     }
-    res = res.assign(
-        typologie=lambda _: df.ORG_SIGLE.map(
+    output_df = output_df.assign(
+        typologie=lambda _: input_df.ORG_SIGLE.map(
             lambda s: DI_STRUCT_TYPE_BY_SIGLE.get(s, None)
         )
     )
 
     # telephone
-    res = res.assign(telephone=df.ORG_TEL)
+    output_df = output_df.assign(telephone=input_df.ORG_TEL)
 
     # courriel
-    res = res.assign(courriel=df.ORG_MAIL)
+    output_df = output_df.assign(courriel=input_df.ORG_MAIL)
 
     # site_web
-    res = res.assign(site_web=df.ORG_WEB)
+    output_df = output_df.assign(site_web=input_df.ORG_WEB)
 
     # presentation_resume
     # presentation_detail
-    res = res.assign(
-        presentation_resume=lambda _: df.ORG_DESC.map(
+    output_df = output_df.assign(
+        presentation_resume=lambda _: input_df.ORG_DESC.map(
             lambda s: (s if len(s) <= 280 else s[:279] + "…") if s is not None else None
         ),
-        presentation_detail=lambda _: df.ORG_DESC.map(
+        presentation_detail=lambda _: input_df.ORG_DESC.map(
             lambda s: (None if len(s) <= 280 else s) if s is not None else None
         ),
     )
 
     # source
-    res = res.assign(source=CD35_SOURCE_STR)
+    output_df = output_df.assign(source=CD35_SOURCE_STR)
 
     # date_maj
-    res = res.assign(
-        date_maj=lambda _: df.apply(
+    output_df = output_df.assign(
+        date_maj=lambda _: input_df.apply(
             lambda row: row.ORG_DATEMAJ or row.ORG_DATECREA, axis=1
         ).map(lambda s: datetime.strptime(s, "%d-%m-%Y").date().isoformat())
     )
 
     # structure_parente
-    res = res.assign(structure_parente=None)
+    output_df = output_df.assign(structure_parente=None)
 
     # lien_source
-    res = res.assign(lien_source=df.URL)
+    output_df = output_df.assign(lien_source=input_df.URL)
 
     # horaires_ouverture
-    res = res.assign(horaires_ouverture=df.ORG_HORAIRE)
+    output_df = output_df.assign(horaires_ouverture=input_df.ORG_HORAIRE)
 
-    res = res.dropna(subset=["typologie"])
+    output_df = output_df.dropna(subset=["typologie"])
 
-    return res
+    return output_df
