@@ -45,5 +45,8 @@ def test_preprocess_cd35(cd35_input_file):
             "structure_parente": None,
             "lien_source": "https://annuaire.ille-et-vilaine.fr/organisme/visualiser/1/0/0",
             "horaires_ouverture": "  \t Lundi : 9h-12h30  \t Mardi et vendredi : 9h-12h30 et 14h-18h  \t Samedi : 9h-12h  ",
+            "accessibilite": None,
+            "labels_nationaux": None,
+            "labels_autres": None,
         }
     ]

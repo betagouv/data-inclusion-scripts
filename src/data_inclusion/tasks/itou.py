@@ -65,6 +65,15 @@ def transform_data(input_df: pd.DataFrame) -> pd.DataFrame:
     # source
     output_df = output_df.assign(source=ITOU_SOURCE_STR)
 
+    # accessibilite
+    output_df = output_df.assign(accessibilite=None)
+
+    # labels_nationaux
+    output_df = output_df.assign(labels_nationaux=None)
+
+    # labels_autres
+    output_df = output_df.assign(labels_autres=None)
+
     output_df = output_df.replace([np.nan, ""], None)
 
     return output_df

@@ -106,6 +106,15 @@ def transform_data(input_df: pd.DataFrame) -> pd.DataFrame:
     # horaires_ouverture
     output_df = output_df.assign(horaires_ouverture=input_df.ORG_HORAIRE)
 
+    # accessibilite
+    output_df = output_df.assign(accessibilite=None)
+
+    # labels_nationaux
+    output_df = output_df.assign(labels_nationaux=None)
+
+    # labels_autres
+    output_df = output_df.assign(labels_autres=None)
+
     output_df = output_df.dropna(subset=["typologie"])
 
     return output_df
