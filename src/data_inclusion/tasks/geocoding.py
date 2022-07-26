@@ -78,7 +78,7 @@ class BaseAdresseNationaleBackend(GeocodingBackend):
                     score=float(row["result_score"]),
                 )
                 for row in reader
-                if row["result_citycode"] != ""
+                if row.get("result_citycode", "") != ""
             ]
 
         return geocoding_results

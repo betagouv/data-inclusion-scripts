@@ -115,6 +115,4 @@ def transform_data(input_df: pd.DataFrame) -> pd.DataFrame:
     # labels_autres
     output_df = output_df.assign(labels_autres=None)
 
-    output_df = output_df.dropna(subset=["typologie"])
-
     return output_df
