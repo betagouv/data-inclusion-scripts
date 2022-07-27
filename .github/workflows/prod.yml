@@ -30,4 +30,5 @@ jobs:
           DI_API_TOKEN: ${{ secrets.DI_API_PROD_TOKEN }}
           ITOU_API_TOKEN: ${{ secrets.ITOU_API_TOKEN }}
         run: |
-          data-inclusion import --src-type itou https://emplois.inclusion.beta.gouv.fr/api/v1/structures/
+          data-inclusion import --src-type itou https://emplois.inclusion.beta.gouv.fr/api/v1/structures/?type=siae
+          data-inclusion import --src-type itou https://emplois.inclusion.beta.gouv.fr/api/v1/structures/?type=orga
