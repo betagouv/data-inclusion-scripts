@@ -5,4 +5,4 @@ extend-exclude = .venv/ .github/ .vscode/
 extend-ignore = E203, W503
 per-file-ignores =
     src/data_inclusion/schema/models.py:F722
-    tests/unit/test_cd35.py:E501
+    tests/unit/test_*.py:E501

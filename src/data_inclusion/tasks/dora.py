@@ -45,9 +45,7 @@ def transform_data(input_df: pd.DataFrame) -> pd.DataFrame:
 
     # typologie
     output_df = output_df.assign(
-        typologie=lambda _: input_df.typology.map(
-            lambda v: v["value"] if v is not None else None
-        )
+        typologie=input_df.typology.map(lambda v: v["value"] if v is not None else None)
     )
 
     # telephone
@@ -70,7 +68,7 @@ def transform_data(input_df: pd.DataFrame) -> pd.DataFrame:
 
     # date_maj
     output_df = output_df.assign(
-        date_maj=lambda _: input_df.modificationDate.apply(
+        date_maj=input_df.modificationDate.map(
             lambda v: datetime.fromisoformat(v).astimezone(pytz.UTC).isoformat()
         )
     )

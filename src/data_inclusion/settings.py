@@ -12,3 +12,7 @@ ITOU_API_TOKEN = os.environ.get("ITOU_API_TOKEN", None)
 
 # Config for siretization
 SIRENE_DATABASE_URL = os.environ.get("SIRENE_DATABASE_URL", None)
+
+# Config for the soliguide source type
+SOLIGUIDE_API_TOKEN = os.environ.get("SOLIGUIDE_API_TOKEN", None)
+SOLIGUIDE_API_USER_AGENT = os.environ.get("SOLIGUIDE_API_USER_AGENT", None)

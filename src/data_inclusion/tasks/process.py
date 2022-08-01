@@ -11,6 +11,8 @@ from data_inclusion.tasks import (
     geocoding,
     itou,
     load,
+    odspep,
+    siao,
     siretisation,
     validate,
 )
@@ -34,6 +36,9 @@ class SourceType(str, enum.Enum):
     CD35 = "cd35"
     DORA = "dora"
     ITOU = "itou"
+    SIAO = "siao"
+    ODSPEP = "odspep"
+    SOLIGUIDE = "soliguide"
 
 
 class DataFormat(str, enum.Enum):
@@ -88,11 +93,44 @@ def preprocess_cd35_datasource(
     return cd35.transform_data(df)
 
 
+def preprocess_siao_datasource(
+    src: str,
+    format: DataFormat = DataFormat.CSV,
+) -> pd.DataFrame:
+    logger.info("Extraction...")
+    df = siao.extract_data(src)
+    logger.info("Transformation...")
+    return siao.transform_data(df)
+
+
+def preprocess_odspep_datasource(
+    src: str,
+    format: DataFormat = DataFormat.CSV,
+) -> pd.DataFrame:
+    logger.info("Extraction...")
+    df = odspep.extract_data(src)
+    logger.info("Transformation...")
+    return odspep.transform_data(df)
+
+
+def preprocess_soliguide_datasource(
+    src: str,
+    format: DataFormat = DataFormat.CSV,
+) -> pd.DataFrame:
+    logger.info("Extraction...")
+    df = odspep.extract_data(src)
+    logger.info("Transformation...")
+    return odspep.transform_data(df)
+
+
 PREPROCESS_BY_SOURCE_TYPE = {
     SourceType.DORA: preprocess_dora_datasource,
     SourceType.ITOU: preprocess_itou_datasource,
     SourceType.CD35: preprocess_cd35_datasource,
     SourceType.V0: preprocess_generic_v0_datasource,
+    SourceType.SIAO: preprocess_siao_datasource,
+    SourceType.ODSPEP: preprocess_odspep_datasource,
+    SourceType.SOLIGUIDE: preprocess_soliguide_datasource,
 }
 
 

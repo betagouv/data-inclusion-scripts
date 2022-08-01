@@ -62,7 +62,7 @@ def transform_data(input_df: pd.DataFrame) -> pd.DataFrame:
         "SAAD": models.Typologie.Autre.value,
     }
     output_df = output_df.assign(
-        typologie=lambda _: input_df.ORG_SIGLE.map(
+        typologie=input_df.ORG_SIGLE.map(
             lambda s: DI_STRUCT_TYPE_BY_SIGLE.get(s, None) or s
         )
     )
@@ -79,10 +79,10 @@ def transform_data(input_df: pd.DataFrame) -> pd.DataFrame:
     # presentation_resume
     # presentation_detail
     output_df = output_df.assign(
-        presentation_resume=lambda _: input_df.ORG_DESC.map(
+        presentation_resume=input_df.ORG_DESC.map(
             lambda s: (s if len(s) <= 280 else s[:279] + "…") if s is not None else None
         ),
-        presentation_detail=lambda _: input_df.ORG_DESC.map(
+        presentation_detail=input_df.ORG_DESC.map(
             lambda s: (None if len(s) <= 280 else s) if s is not None else None
         ),
     )
@@ -92,7 +92,7 @@ def transform_data(input_df: pd.DataFrame) -> pd.DataFrame:
 
     # date_maj
     output_df = output_df.assign(
-        date_maj=lambda _: input_df.apply(
+        date_maj=input_df.apply(
             lambda row: row.ORG_DATEMAJ or row.ORG_DATECREA, axis=1
         ).map(lambda s: datetime.strptime(s, "%d-%m-%Y").date().isoformat())
     )
