@@ -65,8 +65,12 @@ Les scripts sont exécutés régulièrement grâce à la ci de github (cf [`.git
 
 ## Développement
 
-* Les scripts ont vocation à être via différent points d'entrée (i.e. CLI, Airflow)
+* Les scripts ont vocation à être via différents points d'entrée: CLI, PythonOperator d'Airflow
 * La validation du schéma est effectuée via `pydantic`
+
+### Pipeline
+
+![](./docs/img/pipeline.jpg)
 
 ## [Auteurs](CODEOWNERS)
 
