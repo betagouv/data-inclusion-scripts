@@ -1,7 +1,9 @@
 import json
 import logging
+from pathlib import Path
 from typing import Optional
 
+import numpy as np
 import pandas as pd
 import requests
 from tqdm import tqdm
@@ -32,7 +34,9 @@ class DataInclusionAPIV0Client:
         return resp.json()
 
 
-def load_to_data_inclusion(df: pd.DataFrame):
+def load_data(path: Path):
+    logger.info("[VERSEMENT]")
+
     if settings.DI_API_URL is None:
         logger.error(
             "La variable d'environnement DI_API_URL doit être configurée pour verser "
@@ -45,8 +49,11 @@ def load_to_data_inclusion(df: pd.DataFrame):
         token=settings.DI_API_TOKEN,
     )
 
+    input_df = pd.read_json(path, dtype=False).replace(np.nan, None)
+    input_df = input_df.loc[input_df.is_valid].drop(columns=["is_valid"])
+
     # antennas will be sent after their parent structures
-    df = df.sort_values("structure_parente", na_position="first")
+    df = input_df.sort_values("structure_parente", na_position="first")
 
     for _, row in tqdm(df.iterrows(), total=len(df)):
         # serialize/deserialize to ensure `np.nan` are converted to `null`

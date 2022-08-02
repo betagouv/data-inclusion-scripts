@@ -1,10 +1,13 @@
 import logging
 import time
 from copy import deepcopy
+from datetime import datetime
+from pathlib import Path
 from typing import Optional
 
 import numpy as np
 import pandas as pd
+import pytz
 import requests
 from dateutil.parser import parse as dateutil_parse
 from tqdm import tqdm
@@ -28,7 +31,9 @@ class APIClient:
             {"Authorization": f"JWT {settings.SOLIGUIDE_API_TOKEN}"}
         )
         if settings.SOLIGUIDE_API_USER_AGENT is not None:
-            {"User-Agent": settings.SOLIGUIDE_API_USER_AGENT}
+            self.session.headers.update(
+                {"User-Agent": settings.SOLIGUIDE_API_USER_AGENT}
+            )
 
     def search(
         self,
@@ -84,22 +89,38 @@ class APIClient:
         return places_data
 
 
-def extract_data(src: str) -> pd.DataFrame:
+def extract_data(src: str) -> Path:
     client = APIClient(base_url=src)
     all_places_data = client.search(
         location_geo_type="pays",
         location_geo_value="france",
     )
+
+    dt = datetime.now(tz=pytz.UTC).isoformat(timespec="seconds")
+    output_path = Path(f"./soliguide.{dt}.json")
     all_places_df = pd.DataFrame.from_records(data=all_places_data)
-    all_places_df = pd.json_normalize(all_places_df.to_dict(orient="records"))
-    return all_places_df.replace(["", np.nan], None)
+    all_places_df.to_json(output_path, orient="records", force_ascii=False)
+
+    return output_path
 
 
-def transform_data(input_df: pd.DataFrame) -> pd.DataFrame:
+def transform_data(path: Path) -> Path:
+    output_path = Path(f"./{path.stem}.reshaped.json")
+    input_df = pd.read_json(path, dtype=False).replace(np.nan, None)
+    output_df = transform_dataframe(input_df)
+    output_df.to_json(output_path, orient="records", force_ascii=False)
+    return output_path
+
+
+def transform_dataframe(input_df: pd.DataFrame) -> pd.DataFrame:
+    input_df = pd.json_normalize(input_df.to_dict(orient="records"))
+
     output_df = pd.DataFrame()
 
+    input_df = input_df.replace("", None)
+
     # id
-    output_df = output_df.assign(id=input_df["lieu_id"])
+    output_df = output_df.assign(id=input_df["lieu_id"].astype(str))
 
     # siret
     output_df = output_df.assign(siret=None)

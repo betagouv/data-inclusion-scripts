@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from data_inclusion.tasks import siao
+from data_inclusion.tasks.sources import siao
 
 
 @pytest.fixture
@@ -104,7 +104,7 @@ def siao_sample_df():
 
 
 def test_transform_siao(siao_sample_df):
-    df = siao.transform_data(siao_sample_df)
+    df = siao.transform_dataframe(siao_sample_df)
 
     assert df.to_dict(orient="records") == [
         {

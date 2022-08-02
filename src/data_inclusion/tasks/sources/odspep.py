@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -8,14 +9,20 @@ from data_inclusion.schema import models
 ODSPEP_SOURCE_STR = "odspep"
 
 
-def extract_data(src: str) -> pd.DataFrame:
-    return pd.read_excel(src, dtype=str).replace([np.nan, ""], None)
+def transform_data(path: Path) -> Path:
+    output_path = Path(f"./{path.stem}.reshaped.json")
+    input_df = pd.read_excel(str(path), dtype=str).replace(np.nan, None)
+    output_df = transform_dataframe(input_df)
+    output_df.to_json(output_path, orient="records", force_ascii=False)
+    return output_path
 
 
-def transform_data(input_df: pd.DataFrame) -> pd.DataFrame:
+def transform_dataframe(input_df: pd.DataFrame) -> pd.DataFrame:
     # TODO: only services are properly identified in the file. There is no reliable way
     # to prevent duplicated structures rows at this point or to detect antennas.
     input_df = input_df.drop_duplicates("ID_RES")
+
+    input_df = input_df.replace("", None)
 
     output_df = pd.DataFrame()
 

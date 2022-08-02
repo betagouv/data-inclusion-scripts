@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -8,17 +9,23 @@ from data_inclusion.schema import models
 CD35_SOURCE_STR = "cd35"
 
 
-def extract_data(src: str) -> pd.DataFrame:
-    return pd.read_csv(
-        src,
+def transform_data(path: Path) -> Path:
+    output_path = Path(f"./{path.stem}.reshaped.json")
+    input_df = pd.read_csv(
+        path,
         sep=";",
         encoding_errors="replace",
         on_bad_lines="warn",
         dtype=str,
-    ).replace(["", np.nan], None)
+    ).replace(np.nan, None)
+    output_df = transform_dataframe(input_df)
+    output_df.to_json(output_path, orient="records", force_ascii=False)
+    return output_path
 
 
-def transform_data(input_df: pd.DataFrame) -> pd.DataFrame:
+def transform_dataframe(input_df: pd.DataFrame) -> pd.DataFrame:
+    input_df = input_df.replace("", None)
+
     output_df = pd.DataFrame()
 
     # id

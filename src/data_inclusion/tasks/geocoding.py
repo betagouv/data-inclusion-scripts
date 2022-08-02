@@ -2,9 +2,13 @@ import csv
 import dataclasses
 import io
 import logging
+from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import requests
+
+from data_inclusion.tasks import utils
 
 logger = logging.getLogger(__name__)
 
@@ -84,17 +88,33 @@ class BaseAdresseNationaleBackend(GeocodingBackend):
         return geocoding_results
 
 
-def geocode_normalized_dataset(
+def geocode_normalized_data(
+    path: Path,
+    geocoding_backend: GeocodingBackend,
+) -> Path:
+    logger.info("[GÉOCODING]")
+    output_path = Path(f"./{path.stem}.geocoded.json")
+    input_df = pd.read_json(path, dtype=False).replace(np.nan, None)
+    output_df = geocode_normalized_dataframe(
+        input_df, geocoding_backend=geocoding_backend
+    )
+    output_df.to_json(output_path, orient="records", force_ascii=False)
+    return output_path
+
+
+def geocode_normalized_dataframe(
     df: pd.DataFrame,
     geocoding_backend: GeocodingBackend,
 ) -> pd.DataFrame:
+    utils.log_df_info(df, logger)
+
     geocoding_outputs = geocoding_backend.geocode_batch(
         [
             GeocodingInput(
                 id=id, adresse=adresse, code_postal=code_postal, commune=commune
             )
             for id, adresse, code_postal, commune in zip(
-                df["id"], df["adresse"], df["code_postal"], df["commune"]
+                df.id, df.adresse, df.code_postal, df.commune
             )
         ]
     )
@@ -118,5 +138,7 @@ def geocode_normalized_dataset(
         return geocoding_output.code_insee
 
     df["code_insee"] = df.apply(fill_code_insee, axis="columns")
+
+    utils.log_df_info(df, logger)
 
     return df

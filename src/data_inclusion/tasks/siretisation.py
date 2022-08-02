@@ -1,13 +1,16 @@
 import logging
 import textwrap
+from pathlib import Path
 from typing import Optional
 
+import numpy as np
 import pandas as pd
 import sqlalchemy as slqa
 from sqlalchemy.engine import Engine
 from tqdm import tqdm
 
 from data_inclusion import settings
+from data_inclusion.tasks import utils
 
 logger = logging.getLogger(__name__)
 
@@ -71,9 +74,22 @@ def search_establishment(
     return establishments_df.iloc[0].to_dict()
 
 
-def siretize_normalized_dataset(
+def siretize_normalized_data(
+    path: Path,
+) -> Path:
+    logger.info("[SIRETISATION]")
+    output_path = Path(f"./{path.stem}.siret.json")
+    input_df = pd.read_json(path, dtype=False).replace(np.nan, None)
+    output_df = siretize_normalized_dataframe(input_df.sample(50))
+    output_df.to_json(output_path, orient="records", force_ascii=False)
+    return output_path
+
+
+def siretize_normalized_dataframe(
     structures_df: pd.DataFrame,
 ) -> pd.DataFrame:
+    utils.log_df_info(structures_df, logger)
+
     if settings.SIRENE_DATABASE_URL is None:
         raise Exception("SIRENE_DATABASE_URL not configured.")
 
@@ -88,9 +104,11 @@ def siretize_normalized_dataset(
             longitude=row.longitude,
             engine=engine,
         )
-        or {},
+        or {"siret": None},
         axis="columns",
         result_type="expand",
     )
+
+    utils.log_df_info(structures_df, logger)
 
     return structures_df.assign(siret=lambda _: establishments_df.siret)

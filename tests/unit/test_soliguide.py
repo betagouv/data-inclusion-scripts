@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from data_inclusion.tasks import soliguide
+from data_inclusion.tasks.sources import soliguide
 
 
 @pytest.fixture
@@ -509,11 +509,11 @@ def soliguide_sample_df():
 
 
 def test_transform_soliguide(soliguide_sample_df):
-    df = soliguide.transform_data(soliguide_sample_df)
+    df = soliguide.transform_dataframe(soliguide_sample_df)
 
     assert df.to_dict(orient="records") == [
         {
-            "id": 5447,
+            "id": "5447",
             "siret": None,
             "rna": None,
             "nom": "Centre Communal d'Action Sociale (CCAS) / France Services du Pellerin",
@@ -521,7 +521,7 @@ def test_transform_soliguide(soliguide_sample_df):
             "code_postal": "44640",
             "code_insee": None,
             "adresse": "Mairie annexe CCAS, Allée George Sand, Le Pellerin",
-            "complement_adresse": "",
+            "complement_adresse": None,
             "longitude": -1.7543631,
             "latitude": 47.1990389,
             "typologie": "CCAS",

@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -7,7 +8,25 @@ import pytz
 DORA_SOURCE_STR = "dora"
 
 
-def transform_data(input_df: pd.DataFrame) -> pd.DataFrame:
+def extract_data(src: str):
+    dt = datetime.now(tz=pytz.UTC).isoformat(timespec="seconds")
+    output_path = Path(f"./dora.{dt}.json")
+    df = pd.read_json(src, dtype=False)
+    df.to_json(output_path, orient="records", force_ascii=False)
+    return output_path
+
+
+def transform_data(path: Path) -> Path:
+    output_path = Path(f"./{path.stem}.reshaped.json")
+    input_df = pd.read_json(path, dtype=False).replace(np.nan, None)
+    output_df = transform_dataframe(input_df)
+    output_df.to_json(output_path, orient="records", force_ascii=False)
+    return output_path
+
+
+def transform_dataframe(input_df: pd.DataFrame) -> pd.DataFrame:
+    input_df = input_df.replace("", None)
+
     output_df = pd.DataFrame()
 
     # id

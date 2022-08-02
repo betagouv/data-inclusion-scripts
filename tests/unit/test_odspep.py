@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from data_inclusion.tasks import odspep
+from data_inclusion.tasks.sources import odspep
 
 
 @pytest.fixture
@@ -123,7 +123,7 @@ def odspep_sample_df():
 
 
 def test_transform_odspep(odspep_sample_df):
-    df = odspep.transform_data(odspep_sample_df)
+    df = odspep.transform_dataframe(odspep_sample_df)
 
     assert df.to_dict(orient="records") == [
         {

@@ -47,6 +47,7 @@ def test_validate(caplog):
         result = runner.invoke(cli, ["validate", "dataset.json"])
         assert result.exit_code == 0
         assert caplog.messages == [
+            "[VALIDATION]",
             "Résultats de la validation:",
             "\t0 erreurs détectées",
             "\t0 lignes non conformes",
@@ -54,7 +55,7 @@ def test_validate(caplog):
         ]
 
 
-def test_preprocess_dora_dataset():
+def test_reshape_dora_dataset():
     runner = CliRunner()
 
     dataset_content = textwrap.dedent(
@@ -94,12 +95,10 @@ def test_preprocess_dora_dataset():
     )
 
     with runner.isolated_filesystem():
-        open("dataset.json", "w").write(dataset_content)
-        result = runner.invoke(
-            cli, ["preprocess", "--src-type", "dora", "dataset.json", "output.json"]
-        )
+        open("dora.json", "w").write(dataset_content)
+        result = runner.invoke(cli, ["reshape", "--src-type", "dora", "dora.json"])
         assert result.exit_code == 0
-        result = json.loads(open("output.json", "r").read())
+        result = json.loads(open("dora.reshaped.json", "r").read())
         assert result == [
             {
                 "id": "4e6f9f89-aa6f-4425-aaba-2b8f657cd4dd",
